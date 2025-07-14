@@ -130,100 +130,22 @@
   </div>
 
   <script>
-  const urlAPI = "https://script.google.com/macros/s/AKfycbzQ5cBUuuVqJvApC7V6mH89jAYz9riZPqC8K00gWTVyIJYnXbPbU7Dafr20YvdiNcLvhg/exec";
-
-  let listaPresentes = [];
-  let presenteSelecionado = null;
-
-  async function carregarPresentes() {
-    const res = await fetch(urlAPI);
-    const dados = await res.json();
-
-    listaPresentes = dados.map(item => ({
-      nome: item.produto,
-      imagem: item.imagem,
-      descricao: item.descrição,
-      valor: item.valor,
-      disponivel: item.disponível?.toLowerCase() === 'sim'
-    }));
-
-    renderizarPresentes();
-  }
-
-  function renderizarPresentes() {
-    const presentesDiv = document.getElementById("presentes");
-    presentesDiv.innerHTML = "";
-
-    listaPresentes.forEach((item, index) => {
-      const card = document.createElement("div");
-      card.className = "presente";
-
-      const img = document.createElement("img");
-      img.src = item.imagem;
-      img.alt = item.nome;
-
-      const info = document.createElement("div");
-      info.className = "info";
-      info.innerHTML = `<h3>${item.nome}</h3><p>${item.descricao}</p><p><span>${item.valor}</span></p>`;
-
-      const botao = document.createElement("button");
-      botao.textContent = item.disponivel ? "Vou dar esse presente" : "Já escolhido";
-      botao.className = "botao" + (item.disponivel ? "" : " desativado");
-      botao.disabled = !item.disponivel;
-      botao.onclick = () => abrirModal(index);
-
-      card.appendChild(img);
-      card.appendChild(info);
-      card.appendChild(botao);
-
-      presentesDiv.appendChild(card);
-    });
-  }
-
-  function abrirModal(index) {
-    presenteSelecionado = index;
-    document.getElementById("presenteEscolhido").textContent = listaPresentes[index].nome;
-    document.getElementById("modal").classList.remove("hidden");
-  }
-
-  function fecharModal() {
-    document.getElementById("modal").classList.add("hidden");
-    document.getElementById("nome").value = "";
-    document.getElementById("email").value = "";
-  }
-
-  function confirmarPresente() {
-    const nome = document.getElementById("nome").value;
-    const email = document.getElementById("email").value;
-
-    if (!nome || !email) {
-      alert("Por favor, preencha seu nome e e-mail.");
-      return;
-    }
-
-    fetch(urlAPI, {
-      method: 'POST',
-      body: JSON.stringify({
-        nome: nome,
-        email: email,
-        presente: listaPresentes[presenteSelecionado].nome
-      }),
-      headers: {
-        'Content-Type': 'application/json'
+    const listaPresentes = [
+      {
+        nome: "TV 65 polegadas",
+        imagem: "https://m.media-amazon.com/images/I/51O+lnoMUUL._AC_SX522_.jpg",
+        descricao: "Smart TV com resolução 4K UHD.",
+        valor: "R$ 3.497,67",
+        disponivel: true
+      },
+      {
+        nome: "Jogo de Panelas",
+        imagem: "https://assets.tramontina.com.br/upload/tramon/imagens/FAR/65510200PDM001G.jpg",
+        descricao: "Conjunto antiaderente com 5 peças.",
+        valor: "R$ 901,60",
+        disponivel: false
       }
-    })
-    .then(res => res.text())
-    .then(res => {
-      console.log('Resposta:', res);
-      listaPresentes[presenteSelecionado].disponivel = false;
-      fecharModal();
-      renderizarPresentes();
-    });
-  }
-
-  carregarPresentes();
-</script>
-;
+    ];
 
     const presentesDiv = document.getElementById("presentes");
     let presenteSelecionado = null;
