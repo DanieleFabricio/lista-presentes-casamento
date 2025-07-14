@@ -1,114 +1,27 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Casamento Daniele & Fabrício</title>
   <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      background-color: #fdfdfd;
-      color: #333;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
-      padding: 20px;
-      text-align: center;
-    }
-    h1 {
-      color: #c89b3f;
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-    }
-    p {
-      font-size: 1.1rem;
-      color: #666;
-      margin-bottom: 2rem;
-    }
-    .presente {
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      background-color: #fff;
-    }
-    .presente img {
-      max-width: 150px;
-      border-radius: 10px;
-    }
-    .info {
-      flex: 1;
-      text-align: left;
-    }
-    .info h3 {
-      margin: 0;
-      font-size: 1.2rem;
-      color: #444;
-    }
-    .info p {
-      margin: 0.5rem 0;
-      color: #555;
-    }
-    .info span {
-      font-weight: bold;
-      color: #222;
-    }
-    .botao {
-      background-color: #c89b3f;
-      border: none;
-      padding: 10px 20px;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 8px;
-      transition: background 0.3s;
-    }
-    .botao:hover {
-      background-color: #b88b2f;
-    }
-    .botao.desativado {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-    .modal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .modal.hidden {
-      display: none;
-    }
-    .modal-content {
-      background-color: white;
-      padding: 30px;
-      border-radius: 12px;
-      text-align: center;
-      max-width: 400px;
-      width: 100%;
-    }
-    .modal-content input {
-      width: 90%;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    .modal-content button {
-      margin-top: 10px;
-    }
-    .fechar {
-      background-color: #aaa;
-    }
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #fdfdfd; color: #333; }
+    .container { max-width: 800px; margin: auto; padding: 20px; text-align: center; }
+    h1 { color: #c89b3f; font-size: 2.5rem; }
+    p { color: #555; }
+    .presente { background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; display: flex; gap: 15px; align-items: center; }
+    .presente img { width: 120px; border-radius: 10px; }
+    .info { flex: 1; text-align: left; }
+    .info h3 { margin: 0; color: #444; }
+    .info span { font-weight: bold; color: #000; }
+    .botao { background: #c89b3f; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; }
+    .botao:hover { background: #b88b2f; }
+    .botao.desativado { background: #ccc; cursor: not-allowed; }
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; }
+    .modal.ativo { display: flex; }
+    .modal-content { background: white; padding: 20px; border-radius: 12px; text-align: center; width: 90%; max-width: 400px; }
+    .modal-content input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; }
+    .modal-content button { margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -118,39 +31,40 @@
     <div id="presentes"></div>
   </div>
 
-  <!-- Modal para confirmar presente -->
-  <div id="modal" class="modal hidden">
+  <!-- Modal -->
+  <div id="modal" class="modal">
     <div class="modal-content">
-      <h2>Você escolheu: <span id="presenteEscolhido"></span></h2>
-      <input type="text" id="nome" placeholder="Seu nome" required>
-      <input type="email" id="email" placeholder="Seu e-mail" required>
+      <h2>Você escolheu: <span id="presenteSelecionadoNome"></span></h2>
+      <input type="text" id="nome" placeholder="Seu nome" />
+      <input type="email" id="email" placeholder="Seu e-mail" />
       <button onclick="confirmarPresente()">Confirmar</button>
-      <button class="fechar" onclick="fecharModal()">Cancelar</button>
+      <button onclick="fecharModal()">Cancelar</button>
     </div>
   </div>
 
   <script>
-    const urlAPI = 'https://script.google.com/macros/s/AKfycbzQ5cBUuuVqJvApC7V6mH89jAYz9riZPqC8K00gWTVyIJYnXbPbU7Dafr20YvdiNcLvhg/exec';
-    const presentesDiv = document.getElementById("presentes");
-    let listaPresentes = [];
+    const API_URL = "https://script.google.com/macros/s/SEU_ID_AQUI/exec"; // troque pela sua URL
+    const divPresentes = document.getElementById("presentes");
+    const modal = document.getElementById("modal");
+    let lista = [];
     let presenteSelecionado = null;
 
     function carregarPresentes() {
-      fetch(urlAPI)
+      fetch(API_URL)
         .then(res => res.json())
         .then(data => {
-          listaPresentes = data;
-          renderizarPresentes();
+          lista = data;
+          mostrarPresentes();
         })
         .catch(err => {
-          console.error("Erro ao carregar presentes:", err);
-          presentesDiv.innerHTML = "<p>Erro ao carregar os presentes. Tente novamente mais tarde.</p>";
+          divPresentes.innerHTML = "<p>Erro ao carregar os presentes.</p>";
+          console.error(err);
         });
     }
 
-    function renderizarPresentes() {
-      presentesDiv.innerHTML = "";
-      listaPresentes.forEach((item, index) => {
+    function mostrarPresentes() {
+      divPresentes.innerHTML = "";
+      lista.forEach((item, index) => {
         const card = document.createElement("div");
         card.className = "presente";
 
@@ -159,36 +73,30 @@
 
         const info = document.createElement("div");
         info.className = "info";
-        info.innerHTML = `
-          <h3>${item.produto}</h3>
-          <p>${item.descricao || ""}</p>
-          <p><span>${item.valor || ""}</span></p>
-        `;
+        info.innerHTML = `<h3>${item.produto}</h3><p>${item.descricao}</p><p><span>${item.valor}</span></p>`;
 
         const botao = document.createElement("button");
         const disponivel = item.disponível?.toLowerCase() === "sim";
         botao.textContent = disponivel ? "Vou dar esse presente" : "Já escolhido";
         botao.className = "botao" + (disponivel ? "" : " desativado");
         botao.disabled = !disponivel;
-
-        botao.onclick = () => abrirModal(index);
+        if (disponivel) botao.onclick = () => abrirModal(index);
 
         card.appendChild(img);
         card.appendChild(info);
         card.appendChild(botao);
-
-        presentesDiv.appendChild(card);
+        divPresentes.appendChild(card);
       });
     }
 
     function abrirModal(index) {
       presenteSelecionado = index;
-      document.getElementById("presenteEscolhido").textContent = listaPresentes[index].produto;
-      document.getElementById("modal").classList.remove("hidden");
+      document.getElementById("presenteSelecionadoNome").textContent = lista[index].produto;
+      modal.classList.add("ativo");
     }
 
     function fecharModal() {
-      document.getElementById("modal").classList.add("hidden");
+      modal.classList.remove("ativo");
       document.getElementById("nome").value = "";
       document.getElementById("email").value = "";
     }
@@ -196,30 +104,29 @@
     function confirmarPresente() {
       const nome = document.getElementById("nome").value;
       const email = document.getElementById("email").value;
-
       if (!nome || !email) {
-        alert("Por favor, preencha seu nome e e-mail.");
+        alert("Preencha seu nome e e-mail!");
         return;
       }
 
-      fetch(urlAPI, {
-        method: 'POST',
+      fetch(API_URL, {
+        method: "POST",
         body: JSON.stringify({
           nome: nome,
           email: email,
-          presente: listaPresentes[presenteSelecionado].produto
+          presente: lista[presenteSelecionado].produto
         }),
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json"
         }
       })
       .then(res => res.text())
       .then(res => {
         if (res === "Confirmado") {
           alert("Presente confirmado com sucesso!");
-          listaPresentes[presenteSelecionado].disponível = "não";
+          lista[presenteSelecionado].disponível = "não";
           fecharModal();
-          renderizarPresentes();
+          mostrarPresentes();
         } else {
           alert("Esse presente já foi escolhido por outra pessoa.");
         }
