@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Casamento Daniele & Fabrício</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #c89b3f;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+    .presente {
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background-color: #fff;
+    }
+    .presente img {
+      max-width: 150px;
+      border-radius: 10px;
+    }
+    .info {
+      flex: 1;
+      text-align: left;
+    }
+    .info h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #444;
+    }
+    .info p {
+      margin: 0.5rem 0;
+      color: #555;
+    }
+    .info span {
+      font-weight: bold;
+      color: #222;
+    }
+    .botao {
+      background-color: #c89b3f;
+      border: none;
+      padding: 10px 20px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+    .botao:hover {
+      background-color: #b88b2f;
+    }
+    .botao.desativado {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal.hidden {
+      display: none;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+    }
+    .modal-content input {
+      width: 90%;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .modal-content button {
+      margin-top: 10px;
+    }
+    .fechar {
+      background-color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Casamento Daniele & Fabrício</h1>
+    <p>Escolha com carinho um presente para celebrar esse momento especial!</p>
+    <div id="presentes"></div>
+  </div>
+
+  <!-- Modal para confirmar presente -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <h2>Você escolheu: <span id="presenteEscolhido"></span></h2>
+      <input type="text" id="nome" placeholder="Seu nome" required>
+      <input type="email" id="email" placeholder="Seu e-mail" required>
+      <button onclick="confirmarPresente()">Confirmar</button>
+      <button class="fechar" onclick="fecharModal()">Cancelar</button>
+    </div>
+  </div>
+
+  <script>
+    const listaPresentes = [
+      {
+        nome: "TV 65 polegadas",
+        imagem: "https://via.placeholder.com/150",
+        descricao: "Smart TV com resolução 4K UHD.",
+        valor: "R$ 3.497,67",
+        disponivel: true
+      },
+      {
+        nome: "Jogo de Panelas",
+        imagem: "https://via.placeholder.com/150",
+        descricao: "Conjunto antiaderente com 5 peças.",
+        valor: "R$ 901,60",
+        disponivel: false
+      }
+    ];
+
+    const presentesDiv = document.getElementById("presentes");
+    let presenteSelecionado = null;
+
+    function renderizarPresentes() {
+      presentesDiv.innerHTML = "";
+      listaPresentes.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "presente";
+
+        const img = document.createElement("img");
+        img.src = item.imagem;
+
+        const info = document.createElement("div");
+        info.className = "info";
+        info.innerHTML = `<h3>${item.nome}</h3><p>${item.descricao}</p><p><span>${item.valor}</span></p>`;
+
+        const botao = document.createElement("button");
+        botao.textContent = item.disponivel ? "Vou dar esse presente" : "Já escolhido";
+        botao.className = "botao" + (item.disponivel ? "" : " desativado");
+        botao.disabled = !item.disponivel;
+
+        botao.onclick = () => abrirModal(index);
+
+        card.appendChild(img);
+        card.appendChild(info);
+        card.appendChild(botao);
+
+        presentesDiv.appendChild(card);
+      });
+    }
+
+    function abrirModal(index) {
+      presenteSelecionado = index;
+      document.getElementById("presenteEscolhido").textContent = listaPresentes[index].nome;
+      document.getElementById("modal").classList.remove("hidden");
+    }
+
+    function fecharModal() {
+      document.getElementById("modal").classList.add("hidden");
+      document.getElementById("nome").value = "";
+      document.getElementById("email").value = "";
+    }
+
+    function confirmarPresente() {
+      const nome = document.getElementById("nome").value;
+      const email = document.getElementById("email").value;
+
+      if (!nome || !email) {
+        alert("Por favor, preencha seu nome e e-mail.");
+        return;
+      }
+
+      fetch('https://script.google.com/macros/s/AKfycbzQ5cBUuuVqJvApC7V6mH89jAYz9riZPqC8K00gWTVyIJYnXbPbU7Dafr20YvdiNcLvhg/exec', {
+        method: 'POST',
+        body: JSON.stringify({
+          nome: nome,
+          email: email,
+          presente: listaPresentes[presenteSelecionado].nome
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => res.text())
+      .then(res => {
+        console.log('Resposta do servidor:', res);
+        listaPresentes[presenteSelecionado].disponivel = false;
+        fecharModal();
+        renderizarPresentes();
+      });
+    }
+
+    renderizarPresentes();
+  </script>
+</body>
+</html>
