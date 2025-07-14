@@ -130,25 +130,23 @@
   </div>
 
   <script>
-    const listaPresentes = [
-      {
-        nome: "TV 65 polegadas",
-        imagem: "https://m.media-amazon.com/images/I/51O+lnoMUUL._AC_SX522_.jpg",
-        descricao: "Smart TV com resolução 4K UHD.",
-        valor: "R$ 3.497,67",
-        disponivel: true
-      },
-      {
-        nome: "Jogo de Panelas",
-        imagem: "https://assets.tramontina.com.br/upload/tramon/imagens/FAR/65510200PDM001G.jpg",
-        descricao: "Conjunto antiaderente com 5 peças.",
-        valor: "R$ 901,60",
-        disponivel: false
-      }
-    ];
-
+    const urlAPI = 'https://script.google.com/macros/s/AKfycbzQ5cBUuuVqJvApC7V6mH89jAYz9riZPqC8K00gWTVyIJYnXbPbU7Dafr20YvdiNcLvhg/exec';
     const presentesDiv = document.getElementById("presentes");
+    let listaPresentes = [];
     let presenteSelecionado = null;
+
+    function carregarPresentes() {
+      fetch(urlAPI)
+        .then(res => res.json())
+        .then(data => {
+          listaPresentes = data;
+          renderizarPresentes();
+        })
+        .catch(err => {
+          console.error("Erro ao carregar presentes:", err);
+          presentesDiv.innerHTML = "<p>Erro ao carregar os presentes. Tente novamente mais tarde.</p>";
+        });
+    }
 
     function renderizarPresentes() {
       presentesDiv.innerHTML = "";
@@ -157,16 +155,21 @@
         card.className = "presente";
 
         const img = document.createElement("img");
-        img.src = item.imagem;
+        img.src = item.imagem || "https://via.placeholder.com/150";
 
         const info = document.createElement("div");
         info.className = "info";
-        info.innerHTML = `<h3>${item.nome}</h3><p>${item.descricao}</p><p><span>${item.valor}</span></p>`;
+        info.innerHTML = `
+          <h3>${item.produto}</h3>
+          <p>${item.descricao || ""}</p>
+          <p><span>${item.valor || ""}</span></p>
+        `;
 
         const botao = document.createElement("button");
-        botao.textContent = item.disponivel ? "Vou dar esse presente" : "Já escolhido";
-        botao.className = "botao" + (item.disponivel ? "" : " desativado");
-        botao.disabled = !item.disponivel;
+        const disponivel = item.disponível?.toLowerCase() === "sim";
+        botao.textContent = disponivel ? "Vou dar esse presente" : "Já escolhido";
+        botao.className = "botao" + (disponivel ? "" : " desativado");
+        botao.disabled = !disponivel;
 
         botao.onclick = () => abrirModal(index);
 
@@ -180,7 +183,7 @@
 
     function abrirModal(index) {
       presenteSelecionado = index;
-      document.getElementById("presenteEscolhido").textContent = listaPresentes[index].nome;
+      document.getElementById("presenteEscolhido").textContent = listaPresentes[index].produto;
       document.getElementById("modal").classList.remove("hidden");
     }
 
@@ -199,12 +202,12 @@
         return;
       }
 
-      fetch('https://script.google.com/macros/s/AKfycbzQ5cBUuuVqJvApC7V6mH89jAYz9riZPqC8K00gWTVyIJYnXbPbU7Dafr20YvdiNcLvhg/exec', {
+      fetch(urlAPI, {
         method: 'POST',
         body: JSON.stringify({
           nome: nome,
           email: email,
-          presente: listaPresentes[presenteSelecionado].nome
+          presente: listaPresentes[presenteSelecionado].produto
         }),
         headers: {
           'Content-Type': 'application/json'
@@ -212,14 +215,18 @@
       })
       .then(res => res.text())
       .then(res => {
-        console.log('Resposta do servidor:', res);
-        listaPresentes[presenteSelecionado].disponivel = false;
-        fecharModal();
-        renderizarPresentes();
+        if (res === "Confirmado") {
+          alert("Presente confirmado com sucesso!");
+          listaPresentes[presenteSelecionado].disponível = "não";
+          fecharModal();
+          renderizarPresentes();
+        } else {
+          alert("Esse presente já foi escolhido por outra pessoa.");
+        }
       });
     }
 
-    renderizarPresentes();
+    carregarPresentes();
   </script>
 </body>
 </html>
