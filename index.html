@@ -5,29 +5,172 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Casamento Daniele & Fabrício</title>
   <style>
-    body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #fdfdfd; color: #333; }
-    .container { max-width: 800px; margin: auto; padding: 20px; text-align: center; }
-    h1 { color: #c89b3f; font-size: 2.5rem; }
-    p { color: #555; }
-    .presente { background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; display: flex; gap: 15px; align-items: center; }
-    .presente img { width: 120px; border-radius: 10px; }
-    .info { flex: 1; text-align: left; }
-    .info h3 { margin: 0; color: #444; }
-    .info span { font-weight: bold; color: #000; }
-    .botao { background: #c89b3f; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; }
-    .botao:hover { background: #b88b2f; }
-    .botao.desativado { background: #ccc; cursor: not-allowed; }
-    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; }
-    .modal.ativo { display: flex; }
-    .modal-content { background: white; padding: 20px; border-radius: 12px; text-align: center; width: 90%; max-width: 400px; }
-    .modal-content input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; }
-    .modal-content button { margin-top: 10px; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #fdfdfd;
+      color: #333;
+    }
+
+    header {
+      background-color: #fff;
+      text-align: center;
+      padding: 2rem;
+      border-bottom: 2px solid #f0e6d2;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      color: #c59d5f;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      margin-top: 0.5rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .presente {
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    @media (min-width: 600px) {
+      .presente {
+        flex-direction: row;
+        text-align: left;
+      }
+    }
+
+    .presente img {
+      width: 120px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    .info {
+      flex: 1;
+      margin-top: 10px;
+    }
+
+    @media (min-width: 600px) {
+      .info {
+        margin-top: 0;
+        margin-left: 15px;
+      }
+    }
+
+    .info h3 {
+      margin: 0 0 5px;
+      color: #444;
+    }
+
+    .info p {
+      margin: 4px 0;
+    }
+
+    .info span {
+      font-weight: bold;
+      color: #000;
+    }
+
+    .botao {
+      background: #c89b3f;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 10px;
+    }
+
+    .botao:hover {
+      background: #b88b2f;
+    }
+
+    .botao.desativado {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .modal.ativo {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    .modal-content button {
+      margin: 5px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+    }
+
+    .confirmado {
+      border: 2px solid #c59d5f;
+      background-color: #fffce9;
+    }
+
+    .destaque {
+      color: #c59d5f;
+      font-weight: bold;
+      margin-top: 8px;
+    }
   </style>
 </head>
 <body>
+
+  <header>
+    <h1>Daniele & Fabrício – Lista de Presentes</h1>
+    <p>Seja bem-vindo(a)! Escolha um presente para celebrar conosco esse momento especial. 💍</p>
+  </header>
+
   <div class="container">
-    <h1>Casamento Daniele & Fabrício</h1>
-    <p>Escolha com carinho um presente para celebrar esse momento especial!</p>
     <div id="presentes"></div>
   </div>
 
@@ -37,13 +180,13 @@
       <h2>Você escolheu: <span id="presenteSelecionadoNome"></span></h2>
       <input type="text" id="nome" placeholder="Seu nome" />
       <input type="email" id="email" placeholder="Seu e-mail" />
-      <button onclick="confirmarPresente()">Confirmar</button>
+      <button onclick="confirmarPresente()" style="background:#c89b3f; color:white;">Confirmar</button>
       <button onclick="fecharModal()">Cancelar</button>
     </div>
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwbPBDsXqBwmInXeo_df2F1uFBJy8uJdNIL7zIuq5lLh6wBh3WKN6ljnueaQf3foENV/exec"; // troque pela sua URL
+    const API_URL = "https://script.google.com/macros/s/AKfycbwbPBDsXqBwmInXeo_df2F1uFBJy8uJdNIL7zIuq5lLh6wBh3WKN6ljnueaQf3foENV/exec";
     const divPresentes = document.getElementById("presentes");
     const modal = document.getElementById("modal");
     let lista = [];
@@ -64,6 +207,8 @@
 
     function mostrarPresentes() {
       divPresentes.innerHTML = "";
+      const escolhido = localStorage.getItem("presenteEscolhido");
+
       lista.forEach((item, index) => {
         const card = document.createElement("div");
         card.className = "presente";
@@ -73,7 +218,14 @@
 
         const info = document.createElement("div");
         info.className = "info";
-        info.innerHTML = `<h3>${item.produto}</h3><p>${item.descricao}</p><p><span>${item.valor}</span></p>`;
+
+        const descricao = item["descrição"] ?? 'Sem descrição';
+        const valorFormatado = parseFloat(item.valor).toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        });
+
+        info.innerHTML = `<h3>${item.produto}</h3><p>${descricao}</p><p><span>${valorFormatado}</span></p>`;
 
         const botao = document.createElement("button");
         const disponivel = item.disponível?.toLowerCase() === "sim";
@@ -81,6 +233,14 @@
         botao.className = "botao" + (disponivel ? "" : " desativado");
         botao.disabled = !disponivel;
         if (disponivel) botao.onclick = () => abrirModal(index);
+
+        if (escolhido === item.produto) {
+          card.classList.add("confirmado");
+          const destaque = document.createElement("p");
+          destaque.className = "destaque";
+          destaque.textContent = "🎁 Você escolheu este presente";
+          info.appendChild(destaque);
+        }
 
         card.appendChild(img);
         card.appendChild(info);
@@ -102,34 +262,35 @@
     }
 
     function confirmarPresente() {
-      const nome = document.getElementById("nome").value;
-      const email = document.getElementById("email").value;
+      const nome = document.getElementById("nome").value.trim();
+      const email = document.getElementById("email").value.trim();
       if (!nome || !email) {
         alert("Preencha seu nome e e-mail!");
         return;
       }
 
+      const presente = lista[presenteSelecionado].produto;
+
       fetch(API_URL, {
         method: "POST",
-        body: JSON.stringify({
-          nome: nome,
-          email: email,
-          presente: lista[presenteSelecionado].produto
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        }
+        body: JSON.stringify({ nome, email, presente }),
+        headers: { "Content-Type": "application/json" }
       })
       .then(res => res.text())
       .then(res => {
-        if (res === "Confirmado") {
-          alert("Presente confirmado com sucesso!");
+        if (res.toLowerCase().includes("sucesso") || res.toLowerCase().includes("confirmado")) {
+          alert("🎉 Presente confirmado com sucesso!");
+          localStorage.setItem("presenteEscolhido", presente);
           lista[presenteSelecionado].disponível = "não";
           fecharModal();
           mostrarPresentes();
         } else {
           alert("Esse presente já foi escolhido por outra pessoa.");
         }
+      })
+      .catch(err => {
+        alert("Erro ao confirmar. Tente novamente.");
+        console.error(err);
       });
     }
 
