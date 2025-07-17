@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Casamento Daniele & Fabrício</title>
   <style>
     body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #fdfdfd; color: #333; }
@@ -16,7 +16,6 @@
       background: #fff; padding: 15px; border-radius: 12px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px;
       display: flex; flex-wrap: wrap; gap: 15px; align-items: center;
-      justify-content: center;
     }
     .presente img {
       width: 200px; border-radius: 10px; display: block; margin: 0 auto;
@@ -25,47 +24,13 @@
     .info h3 { margin: 0; color: #444; }
     .info span { font-weight: bold; color: #000; }
 
-    .acoes {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      min-width: 180px;
-      align-items: center;
-    }
-
-    .botao, .botao-loja {
-      width: 100%;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 1rem;
-      text-align: center;
-      cursor: pointer;
-      display: block;
-      box-sizing: border-box;
-      text-decoration: none;
-    }
-
     .botao {
-      background: #c59d5f;
-      color: white;
-      border: none;
+      background: #c59d5f; color: white; padding: 10px 20px;
+      border: none; border-radius: 8px; cursor: pointer; font-size: 1rem;
+      display: block; margin: 10px auto 0 auto;
     }
-    .botao:hover:not(.desativado) {
-      background: #b88b2f;
-    }
-    .botao.desativado {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-
-    .botao-loja {
-      background: #008072;
-      color:  #ffffff;
-      border: none;
-    }
-    .botao-loja:hover {
-      background: #855f2e;
-    }
+    .botao:hover { background: #b88b2f; }
+    .botao.desativado { background: #ccc; cursor: not-allowed; }
 
     .modal {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -73,22 +38,72 @@
       z-index: 999;
     }
     .modal.ativo { display: flex; }
+
     .modal-content {
       background: white; padding: 30px; border-radius: 12px;
       text-align: center; width: 90%; max-width: 500px; box-sizing: border-box;
     }
-    .modal-content input {
-      width: 90%; padding: 12px; margin: 10px 0;
-      border-radius: 8px; border: 1px solid #ccc; font-size: 1rem;
+
+    .modal-content input,
+    .modal-content textarea {
+      width: 90%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      box-sizing: border-box;
     }
-    .modal-content input[readonly] {
-      background: #eee; cursor: not-allowed;
+
+    .modal-content textarea {
+      resize: none;
+      height: 48px; /* igual aos inputs */
     }
+
+    .modal-content textarea[readonly] {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #333;
+      background: #eee;
+      cursor: not-allowed;
+      text-align: center;
+    }   
+
     .modal-content button {
-      padding: 10px 20px; border: none; border-radius: 8px; margin: 5px; font-size: 1rem;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      margin: 5px;
+      font-size: 1rem;
     }
-    .modal-content button:first-of-type { background: #28a745; color: #fff; }
-    .modal-content button:last-of-type { background: #dc3545; color: white; }
+
+    .botao-loja {
+    background: #008072;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin: 10px auto 0 auto;
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    }
+    .botao-loja:hover {
+    background: #007265;
+}
+
+
+    .modal-content button:first-of-type {
+      background: #28a745;
+      color: #fff;
+    }
+
+    .modal-content button:last-of-type {
+      background: #dc3545;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -101,14 +116,17 @@
     <div id="presentes">Carregando presentes...</div>
   </div>
 
+  <!-- Modal com textarea como mensagem -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <h2>Você escolheu: <span id="presenteSelecionadoNome"></span></h2>
-      <input type="text" id="nome" placeholder="Seu nome" required />
-      <input type="email" id="email" placeholder="Seu e-mail" required />
-      <input type="text" id="produtoSelecionado" readonly />
-      <button onclick="confirmarPresente()">Confirmar</button>
-      <button onclick="fecharModal()">Cancelar</button>
+      <form id="formularioPresente">
+        <input type="text" name="nome" placeholder="Seu nome" required />
+        <input type="email" name="email" placeholder="Seu e-mail" required />
+        <textarea name="mensagem" readonly required></textarea>
+        <button type="submit">Confirmar</button>
+        <button type="button" onclick="fecharModal()">Cancelar</button>
+      </form>
     </div>
   </div>
 
@@ -118,6 +136,8 @@
 
     const divPresentes = document.getElementById("presentes");
     const modal = document.getElementById("modal");
+    const form = document.getElementById("formularioPresente");
+    const campoMensagem = form.elements["mensagem"];
     let lista = [];
     let presenteSelecionado = null;
 
@@ -134,93 +154,80 @@
     }
 
     function mostrarPresentes() {
-      divPresentes.innerHTML = "";
-      lista.forEach((item, index) => {
-        const card = document.createElement("div");
-        card.className = "presente";
+  divPresentes.innerHTML = "";
+  lista.forEach((item, index) => {
+    const card = document.createElement("div");
+    card.className = "presente";
 
-        const img = document.createElement("img");
-        img.src = item.imagem?.trim() || "https://via.placeholder.com/150";
+    const img = document.createElement("img");
+    img.src = item.imagem || "https://via.placeholder.com/150";
 
-        const info = document.createElement("div");
-        info.className = "info";
-        const descricao = item["descrição"] || "Sem descrição";
-        const valorFormatado = parseFloat(item.valor).toLocaleString('pt-BR', {
-          style: 'currency', currency: 'BRL'
-        });
+    const info = document.createElement("div");
+    info.className = "info";
+    const descricao = item["descrição"] || "Sem descrição";
+    const valorFormatado = parseFloat(item.valor).toLocaleString('pt-BR', {
+      style: 'currency', currency: 'BRL'
+    });
 
-        info.innerHTML = `
-        <h3>${item.produto}</h3>
-        <p>${descricao}</p>
-        <p><span>${valorFormatado}</span></p>
-        ${item.loja ? `<p><strong>Loja:</strong> ${item.loja.trim()}</p>` : ""}
-      `;
-
-
-        const acoes = document.createElement("div");
-        acoes.className = "acoes";
-
-        const disponivel = (item.disponível || "").toLowerCase() === "sim";
-
-        const botao = document.createElement("button");
-        botao.textContent = disponivel ? "Vou dar esse presente" : "Já escolhido";
-        botao.className = "botao" + (disponivel ? "" : " desativado");
-        botao.disabled = !disponivel;
-        if (disponivel) botao.onclick = () => abrirModal(index);
-
-        acoes.appendChild(botao);
-
-        const loja = item.loja?.trim();
-        const linkRota = item["endereço loja"]?.trim();
-
-        if (loja && linkRota) {
-          const botaoRota = document.createElement("a");
-          botaoRota.href = linkRota;
-          botaoRota.target = "_blank";
-          botaoRota.className = "botao-loja";
-          botaoRota.textContent = "Ver rota até a loja";
-
-          acoes.appendChild(botaoRota);
-        }
-
-        card.appendChild(img);
-        card.appendChild(info);
-        card.appendChild(acoes);
-        divPresentes.appendChild(card);
-      });
+    let lojaHtml = "";
+    if (item.loja && item.loja.trim() !== "") {
+      lojaHtml = `<p><strong>Loja:</strong> ${item.loja.trim()}</p>`;
     }
+
+    info.innerHTML = `<h3>${item.produto}</h3><p>${descricao}</p><p><span>${valorFormatado}</span></p>${lojaHtml}`;
+
+    const botao = document.createElement("button");
+    const disponivel = item.disponível?.toLowerCase() === "sim";
+    botao.textContent = disponivel ? "Vou dar esse presente" : "Já escolhido";
+    botao.className = "botao" + (disponivel ? "" : " desativado");
+    botao.disabled = !disponivel;
+    if (disponivel) botao.onclick = () => abrirModal(index);
+
+    const acoes = document.createElement("div");
+    acoes.className = "acoes"; // Certifique-se que essa classe exista no CSS
+
+    acoes.appendChild(botao);
+
+    const linkRota = item["endereço loja"]?.trim();
+    if (item.loja && linkRota) {
+      const botaoRota = document.createElement("a");
+      botaoRota.href = linkRota;
+      botaoRota.target = "_blank";
+      botaoRota.className = "botao-loja";
+      botaoRota.textContent = "Ver rota até a loja";
+      acoes.appendChild(botaoRota);
+    }
+
+    card.appendChild(img);
+    card.appendChild(info);
+    card.appendChild(acoes);
+
+    divPresentes.appendChild(card);
+  });
+}
+
 
     function abrirModal(index) {
       presenteSelecionado = index;
       const produto = lista[index].produto;
       document.getElementById("presenteSelecionadoNome").textContent = produto;
-      document.getElementById("produtoSelecionado").value = produto;
+      campoMensagem.value = produto;
       modal.classList.add("ativo");
     }
 
     function fecharModal() {
       modal.classList.remove("ativo");
-      document.getElementById("nome").value = "";
-      document.getElementById("email").value = "";
-      document.getElementById("produtoSelecionado").value = "";
+      form.reset();
     }
 
-    function confirmarPresente() {
-      const nome = document.getElementById("nome").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const produto = document.getElementById("produtoSelecionado").value.trim();
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
 
-      if (!nome || !email || !produto) {
-        alert("Preencha todos os campos!");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append("nome", nome);
-      formData.append("email", email);
-      formData.append("produto", produto);
-
-      fetch(URL_ENVIAR, { method: "POST", body: formData })
+      const formData = new FormData(form);
+      fetch(URL_ENVIAR, {
+        method: "POST",
+        body: formData
+      })
         .then(res => res.json())
         .then(res => {
           if (res.resultado === "Sucesso") {
@@ -233,7 +240,7 @@
           }
         })
         .catch(() => alert("Erro ao confirmar presente."));
-    }
+    });
 
     carregarPresentes();
   </script>
