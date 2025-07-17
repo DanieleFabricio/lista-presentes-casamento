@@ -153,7 +153,7 @@
         });
     }
 
-    function mostrarPresentes() {
+ function mostrarPresentes() {
   divPresentes.innerHTML = "";
   lista.forEach((item, index) => {
     const card = document.createElement("div");
@@ -184,7 +184,7 @@
     if (disponivel) botao.onclick = () => abrirModal(index);
 
     const acoes = document.createElement("div");
-    acoes.className = "acoes"; // Certifique-se que essa classe exista no CSS
+    acoes.className = "acoes"; // importante para estilizar
 
     acoes.appendChild(botao);
 
@@ -205,6 +205,7 @@
     divPresentes.appendChild(card);
   });
 }
+
 
 
     function abrirModal(index) {
