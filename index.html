@@ -5,11 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Casamento Daniele & Fabrício</title>
   <style>
-    
     body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #fdfdfd; color: #333; }
-    header {
-      background-color: #fff; text-align: center; padding: 2rem; border-bottom: 2px solid #f0e6d2;
-    }
+    header { background-color: #fff; text-align: center; padding: 2rem; border-bottom: 2px solid #f0e6d2; }
     header h1 { font-size: 2rem; color: #c59d5f; margin: 0; }
     header p { font-size: 1.1rem; margin-top: 0.5rem; }
 
@@ -19,35 +16,57 @@
       background: #fff; padding: 15px; border-radius: 12px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px;
       display: flex; flex-wrap: wrap; gap: 15px; align-items: center;
+      justify-content: center;
     }
     .presente img {
-      width: 200px;
-      border-radius: 10px;
-      display: block;
-      margin: 0 auto;
-      }
-    .info {flex: 1; text-align: left; min-width: 200px;}
-
+      width: 200px; border-radius: 10px; display: block; margin: 0 auto;
+    }
+    .info { flex: 1; text-align: left; min-width: 200px; }
     .info h3 { margin: 0; color: #444; }
     .info span { font-weight: bold; color: #000; }
+
+    .acoes {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      min-width: 180px;
+      align-items: center;
+    }
+
+    .botao, .botao-loja {
+      width: 100%;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      text-align: center;
+      cursor: pointer;
+      display: block;
+      box-sizing: border-box;
+      text-decoration: none;
+    }
 
     .botao {
       background: #c59d5f;
       color: white;
-      padding: 10px 20px;
       border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1rem;
-      display: block;
-      margin: 10px auto 0 auto
     }
-    .botao:hover { background: #b88b2f; }
+    .botao:hover:not(.desativado) {
+      background: #b88b2f;
+    }
     .botao.desativado {
-      background: #ccc; cursor: not-allowed;
+      background: #ccc;
+      cursor: not-allowed;
     }
 
-    /* Modal */
+    .botao-loja {
+      background: #008072;
+      color:  #ffffff;
+      border: none;
+    }
+    .botao-loja:hover {
+      background: #855f2e;
+    }
+
     .modal {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center;
@@ -56,24 +75,20 @@
     .modal.ativo { display: flex; }
     .modal-content {
       background: white; padding: 30px; border-radius: 12px;
-      text-align: center; width: 90%; max-width: 500px;
-      box-sizing: border-box;
+      text-align: center; width: 90%; max-width: 500px; box-sizing: border-box;
     }
     .modal-content input {
       width: 90%; padding: 12px; margin: 10px 0;
       border-radius: 8px; border: 1px solid #ccc; font-size: 1rem;
     }
+    .modal-content input[readonly] {
+      background: #eee; cursor: not-allowed;
+    }
     .modal-content button {
-      padding: 10px 20px; border: none;
-      border-radius: 8px; margin: 5px;
-      font-size: 1rem;
+      padding: 10px 20px; border: none; border-radius: 8px; margin: 5px; font-size: 1rem;
     }
-    .modal-content button:first-of-type {
-      background: #28a745; color: rgb(255, 255, 255);
-    }
-    .modal-content button:last-of-type {
-      background: #dc3545; color: white;
-    }
+    .modal-content button:first-of-type { background: #28a745; color: #fff; }
+    .modal-content button:last-of-type { background: #dc3545; color: white; }
   </style>
 </head>
 <body>
@@ -83,37 +98,38 @@
   </header>
 
   <div class="container">
-    <div id="presentes"></div>
+    <div id="presentes">Carregando presentes...</div>
   </div>
 
-  <!-- Modal -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <h2>Você escolheu: <span id="presenteSelecionadoNome"></span></h2>
-      <input type="text" id="nome" placeholder="Seu nome" />
-      <input type="email" id="email" placeholder="Seu e-mail" />
+      <input type="text" id="nome" placeholder="Seu nome" required />
+      <input type="email" id="email" placeholder="Seu e-mail" required />
+      <input type="text" id="produtoSelecionado" readonly />
       <button onclick="confirmarPresente()">Confirmar</button>
       <button onclick="fecharModal()">Cancelar</button>
     </div>
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwbPBDsXqBwmInXeo_df2F1uFBJy8uJdNIL7zIuq5lLh6wBh3WKN6ljnueaQf3foENV/exec";
+    const URL_CARREGAR = "https://script.google.com/macros/s/AKfycbwbPBDsXqBwmInXeo_df2F1uFBJy8uJdNIL7zIuq5lLh6wBh3WKN6ljnueaQf3foENV/exec";
+    const URL_ENVIAR = "https://script.google.com/macros/s/AKfycbwvO7comoJDfD9sFzRrvZO6YlqtH1itmH4ZKx0YQgZEmjR03cQBlTTYYa5bY0lFPnQW2Q/exec";
+
     const divPresentes = document.getElementById("presentes");
     const modal = document.getElementById("modal");
     let lista = [];
     let presenteSelecionado = null;
 
     function carregarPresentes() {
-      fetch(API_URL)
+      fetch(URL_CARREGAR)
         .then(res => res.json())
         .then(data => {
           lista = data;
           mostrarPresentes();
         })
-        .catch(err => {
+        .catch(() => {
           divPresentes.innerHTML = "<p>Erro ao carregar os presentes.</p>";
-          console.error(err);
         });
     }
 
@@ -124,35 +140,61 @@
         card.className = "presente";
 
         const img = document.createElement("img");
-        img.src = item.imagem || "https://via.placeholder.com/150";
+        img.src = item.imagem?.trim() || "https://via.placeholder.com/150";
 
         const info = document.createElement("div");
         info.className = "info";
         const descricao = item["descrição"] || "Sem descrição";
         const valorFormatado = parseFloat(item.valor).toLocaleString('pt-BR', {
-          style: 'currency',
-          currency: 'BRL'
+          style: 'currency', currency: 'BRL'
         });
 
-        info.innerHTML = `<h3>${item.produto}</h3><p>${descricao}</p><p><span>${valorFormatado}</span></p>`;
+        info.innerHTML = `
+        <h3>${item.produto}</h3>
+        <p>${descricao}</p>
+        <p><span>${valorFormatado}</span></p>
+        ${item.loja ? `<p><strong>Loja:</strong> ${item.loja.trim()}</p>` : ""}
+      `;
+
+
+        const acoes = document.createElement("div");
+        acoes.className = "acoes";
+
+        const disponivel = (item.disponível || "").toLowerCase() === "sim";
 
         const botao = document.createElement("button");
-        const disponivel = item.disponível?.toLowerCase() === "sim";
         botao.textContent = disponivel ? "Vou dar esse presente" : "Já escolhido";
         botao.className = "botao" + (disponivel ? "" : " desativado");
         botao.disabled = !disponivel;
         if (disponivel) botao.onclick = () => abrirModal(index);
 
+        acoes.appendChild(botao);
+
+        const loja = item.loja?.trim();
+        const linkRota = item["endereço loja"]?.trim();
+
+        if (loja && linkRota) {
+          const botaoRota = document.createElement("a");
+          botaoRota.href = linkRota;
+          botaoRota.target = "_blank";
+          botaoRota.className = "botao-loja";
+          botaoRota.textContent = "Ver rota até a loja";
+
+          acoes.appendChild(botaoRota);
+        }
+
         card.appendChild(img);
         card.appendChild(info);
-        card.appendChild(botao);
+        card.appendChild(acoes);
         divPresentes.appendChild(card);
       });
     }
 
     function abrirModal(index) {
       presenteSelecionado = index;
-      document.getElementById("presenteSelecionadoNome").textContent = lista[index].produto;
+      const produto = lista[index].produto;
+      document.getElementById("presenteSelecionadoNome").textContent = produto;
+      document.getElementById("produtoSelecionado").value = produto;
       modal.classList.add("ativo");
     }
 
@@ -160,37 +202,37 @@
       modal.classList.remove("ativo");
       document.getElementById("nome").value = "";
       document.getElementById("email").value = "";
+      document.getElementById("produtoSelecionado").value = "";
     }
 
     function confirmarPresente() {
       const nome = document.getElementById("nome").value.trim();
       const email = document.getElementById("email").value.trim();
-      if (!nome || !email) {
-        alert("Preencha seu nome e e-mail!");
+      const produto = document.getElementById("produtoSelecionado").value.trim();
+
+      if (!nome || !email || !produto) {
+        alert("Preencha todos os campos!");
         return;
       }
 
-      fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          presentName: lista[presenteSelecionado].produto,
-          name: nome,
-          email: email
-        }),
-        headers: { "Content-Type": "application/json" }
-      })
-      .then(res => res.text())
-      .then(res => {
-        if (res.includes("Sucesso")) {
-          alert("Presente confirmado com sucesso!");
-          lista[presenteSelecionado].disponível = "não";
-          fecharModal();
-          mostrarPresentes();
-        } else {
-          alert("Esse presente já foi escolhido por outra pessoa.");
-        }
-      })
-      .catch(() => alert("Erro ao confirmar presente."));
+      const formData = new FormData();
+      formData.append("nome", nome);
+      formData.append("email", email);
+      formData.append("produto", produto);
+
+      fetch(URL_ENVIAR, { method: "POST", body: formData })
+        .then(res => res.json())
+        .then(res => {
+          if (res.resultado === "Sucesso") {
+            alert("Presente confirmado com sucesso!");
+            lista[presenteSelecionado].disponível = "não";
+            fecharModal();
+            mostrarPresentes();
+          } else {
+            alert("Esse presente já foi escolhido por outra pessoa.");
+          }
+        })
+        .catch(() => alert("Erro ao confirmar presente."));
     }
 
     carregarPresentes();
