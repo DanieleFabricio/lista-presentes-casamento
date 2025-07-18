@@ -85,7 +85,7 @@
     }
     .modal-content textarea {
       resize: none;
-      height: 48px;
+      height: 50px;
       font-weight: bold;
       font-size: 1.2rem;
       color: #333;
@@ -98,6 +98,69 @@
     }
     .modal-content button:first-of-type { background: #28a745; color: #fff; }
     .modal-content button:last-of-type { background: #dc3545; color: white; }
+
+    .botao-loading {
+      position: relative;
+      color: transparent !important;
+      pointer-events: none;
+    }
+
+    .botao-loading::after {
+      content: "";
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 24px; height: 24px;
+      margin: -12px 0 0 -12px;
+      background: url('Carregando.png') no-repeat center center;
+      background-size: contain;
+      animation: girar 2s linear infinite;
+    }
+
+    @keyframes girar {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Caixa de agradecimento */
+    #mensagemAgradecimento {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    #mensagemAgradecimento.mostrar {
+      display: flex;
+    }
+
+    .caixa-agradecimento {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      animation: zoomIn 0.8s ease;
+    }
+
+    .caixa-agradecimento h2 {
+      color: #c59d5f;
+      margin-bottom: 10px;
+    }
+
+    .caixa-agradecimento p {
+      color: #555;
+      font-size: 1rem;
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -124,6 +187,14 @@
     </div>
   </div>
 
+  <!-- Mensagem de agradecimento personalizada -->
+  <div id="mensagemAgradecimento">
+    <div class="caixa-agradecimento">
+      <h2>🎉 Obrigado por nos presentear!</h2>
+      <p>Seu carinho tornou esse momento ainda mais especial. 💖</p>
+    </div>
+  </div>
+
   <script>
     const URL_CARREGAR = "https://script.google.com/macros/s/AKfycbwbPBDsXqBwmInXeo_df2F1uFBJy8uJdNIL7zIuq5lLh6wBh3WKN6ljnueaQf3foENV/exec";
     const URL_ENVIAR = "https://script.google.com/macros/s/AKfycbwvO7comoJDfD9sFzRrvZO6YlqtH1itmH4ZKx0YQgZEmjR03cQBlTTYYa5bY0lFPnQW2Q/exec";
@@ -132,6 +203,8 @@
     const modal = document.getElementById("modal");
     const form = document.getElementById("formularioPresente");
     const campoMensagem = form.elements["mensagem"];
+    const mensagemAgradecimento = document.getElementById("mensagemAgradecimento");
+
     let lista = [];
     let presenteSelecionado = null;
 
@@ -148,56 +221,56 @@
     }
 
     function mostrarPresentes() {
-  divPresentes.innerHTML = "";
-  lista.forEach((item, index) => {
-    const card = document.createElement("div");
-    card.className = "presente";
+      divPresentes.innerHTML = "";
+      lista.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "presente";
 
-    const img = document.createElement("img");
-    img.src = item.imagem || "https://via.placeholder.com/150";
+        const img = document.createElement("img");
+        img.src = item.imagem || "https://via.placeholder.com/150";
 
-    const info = document.createElement("div");
-    info.className = "info";
-    const descricao = item["descrição"] || "Sem descrição";
-    const valorFormatado = parseFloat(item.valor).toLocaleString('pt-BR', {
-      style: 'currency', currency: 'BRL'
-    });
+        const info = document.createElement("div");
+        info.className = "info";
+        const descricao = item["descrição"] || "Sem descrição";
+        const valorFormatado = parseFloat(item.valor).toLocaleString('pt-BR', {
+          style: 'currency', currency: 'BRL'
+        });
 
-    let lojaHtml = "";
-    if (item.loja && item.loja.trim() !== "") {
-      lojaHtml = `<p><strong>Loja:</strong> ${item.loja.trim()}</p>`;
+        let lojaHtml = "";
+        if (item.loja && item.loja.trim() !== "") {
+          lojaHtml = `<p><strong>Loja:</strong> ${item.loja.trim()}</p>`;
+        }
+
+        info.innerHTML = `<h3>${item.produto}</h3><p>${descricao}</p><p><span>${valorFormatado}</span></p>${lojaHtml}`;
+
+        const botao = document.createElement("button");
+        const disponivel = item.disponível?.toLowerCase() === "sim";
+        botao.textContent = disponivel ? "Vou dar esse presente" : "Já escolhido";
+        botao.className = "botao" + (disponivel ? "" : " desativado");
+        botao.disabled = !disponivel;
+        if (disponivel) botao.onclick = () => abrirModal(index);
+
+        const acoes = document.createElement("div");
+        acoes.className = "acoes";
+
+        acoes.appendChild(botao);
+
+        if (item.loja && item["endereço loja"]) {
+          const botaoRota = document.createElement("a");
+          botaoRota.href = item["endereço loja"].trim();
+          botaoRota.target = "_blank";
+          botaoRota.className = "botao-loja";
+          botaoRota.textContent = "Ver rota até a loja";
+          acoes.appendChild(botaoRota);
+        }
+
+        card.appendChild(img);
+        card.appendChild(info);
+        card.appendChild(acoes);
+
+        divPresentes.appendChild(card);
+      });
     }
-
-    info.innerHTML = `<h3>${item.produto}</h3><p>${descricao}</p><p><span>${valorFormatado}</span></p>${lojaHtml}`;
-
-    const botao = document.createElement("button");
-    const disponivel = item.disponível?.toLowerCase() === "sim";
-    botao.textContent = disponivel ? "Vou dar esse presente" : "Já escolhido";
-    botao.className = "botao" + (disponivel ? "" : " desativado");
-    botao.disabled = !disponivel;
-    if (disponivel) botao.onclick = () => abrirModal(index);
-
-    const acoes = document.createElement("div");
-    acoes.className = "acoes"; // importante para estilizar
-
-    acoes.appendChild(botao);
-
-    if (item.loja && item["endereço loja"]) {
-        const botaoRota = document.createElement("a");
-        botaoRota.href = item["endereço loja"].trim();
-        botaoRota.target = "_blank";
-        botaoRota.className = "botao-loja";
-        botaoRota.textContent = "Ver rota até a loja";
-        acoes.appendChild(botaoRota);
-}
-
-    card.appendChild(img);
-    card.appendChild(info);
-    card.appendChild(acoes);
-
-    divPresentes.appendChild(card);
-  });
-}
 
     function abrirModal(index) {
       presenteSelecionado = index;
@@ -212,8 +285,19 @@
       form.reset();
     }
 
+    function mostrarMensagemAgradecimento() {
+      mensagemAgradecimento.classList.add("mostrar");
+      setTimeout(() => {
+        mensagemAgradecimento.classList.remove("mostrar");
+      }, 4000);
+    }
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
+
+      const botaoConfirmar = form.querySelector("button[type='submit']");
+      botaoConfirmar.classList.add("botao-loading");
+      botaoConfirmar.disabled = true;
 
       const formData = new FormData(form);
       fetch(URL_ENVIAR, {
@@ -223,7 +307,7 @@
         .then(res => res.json())
         .then(res => {
           if (res.resultado === "Sucesso") {
-            alert("Obrigado por nos presentear! ❤️");
+            mostrarMensagemAgradecimento();
             lista[presenteSelecionado].disponível = "não";
             fecharModal();
             mostrarPresentes();
@@ -231,7 +315,11 @@
             alert("Esse presente já foi escolhido por outra pessoa.");
           }
         })
-        .catch(() => alert("Erro ao confirmar presente."));
+        .catch(() => alert("Erro ao confirmar presente."))
+        .finally(() => {
+          botaoConfirmar.classList.remove("botao-loading");
+          botaoConfirmar.disabled = false;
+        });
     });
 
     carregarPresentes();
