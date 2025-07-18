@@ -5,66 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Casamento Daniele & Fabrício</title>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      background: #fdfdfd;
-      color: #333;
-    }
-    header {
-      background-color: #fff;
-      text-align: center;
-      padding: 2rem;
-      border-bottom: 2px solid #f0e6d2;
-    }
-    header h1 {
-      font-size: 2rem;
-      color: #c59d5f;
-      margin: 0;
-    }
-    header p {
-      font-size: 1.1rem;
-      margin-top: 0.5rem;
-    }
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #fdfdfd; color: #333; }
+    header { background-color: #fff; text-align: center; padding: 2rem; border-bottom: 2px solid #f0e6d2; }
+    header h1 { font-size: 2rem; color: #c59d5f; margin: 0; }
+    header p { font-size: 1.1rem; margin-top: 0.5rem; }
 
-    .container {
-      max-width: 1350px;
-      margin: auto;
-      padding: 20px;
-      text-align: center;
-    }
+    .container { max-width: 1350px; margin: auto; padding: 20px; text-align: center; }
 
     .presente {
-      background: #fff;
-      padding: 15px;
-      border-radius: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      align-items: center;
+      background: #fff; padding: 15px; border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px;
+      display: flex; flex-wrap: wrap; gap: 15px; align-items: center;
       justify-content: center;
     }
     .presente img {
-      width: 200px;
-      border-radius: 10px;
-      display: block;
-      margin: 0 auto;
+      width: 200px; border-radius: 10px; display: block; margin: 0 auto;
     }
-    .info {
-      flex: 1;
-      text-align: left;
-      min-width: 200px;
-    }
-    .info h3 {
-      margin: 0;
-      color: #444;
-    }
-    .info span {
-      font-weight: bold;
-      color: #000;
-    }
+    .info { flex: 1; text-align: left; min-width: 200px; }
+    .info h3 { margin: 0; color: #444; }
+    .info span { font-weight: bold; color: #000; }
 
     .acoes {
       display: flex;
@@ -108,47 +67,23 @@
       background: #007265;
     }
 
-    /* Modal */
     .modal {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center;
       z-index: 999;
     }
-    .modal.ativo {
-      display: flex;
-    }
+    .modal.ativo { display: flex; }
     .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      text-align: center;
-      width: 90%;
-      max-width: 500px;
+      background: white; padding: 30px; border-radius: 12px;
+      text-align: center; width: 90%; max-width: 500px; box-sizing: border-box;
+    }
+    .modal-content input,
+    .modal-content textarea {
+      width: 90%; padding: 12px; margin: 10px 0;
+      border-radius: 8px; border: 1px solid #ccc; font-size: 1rem;
       box-sizing: border-box;
     }
-
-    /* Form dentro do modal */
-    #modal .modal-content form {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-    #modal .modal-content form input,
-    #modal .modal-content form textarea {
-      width: 90%;
-      max-width: 400px;
-      box-sizing: border-box;
-      font-size: 1rem;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    #modal .modal-content form textarea {
+    .modal-content textarea {
       resize: none;
       height: 50px;
       font-weight: bold;
@@ -158,56 +93,29 @@
       cursor: not-allowed;
       text-align: center;
     }
+    .modal-content button {
+      padding: 10px 20px; border: none; border-radius: 8px; margin: 5px; font-size: 1rem;
+    }
+    .modal-content button:first-of-type { background: #28a745; color: #fff; }
+    .modal-content button:last-of-type { background: #dc3545; color: white; }
 
-    /* Botões lado a lado */
-    .botoes-container {
-      display: flex;
-      gap: 10px;
-      width: 90%;
-      max-width: 400px;
-      justify-content: center;
-    }
-    .botoes-container button {
-      flex: 1;
-      padding: 10px 0;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      border: none;
-      position: relative;
-    }
-    .botoes-container button:first-child {
-      background: #28a745;
-      color: white;
-    }
-    .botoes-container button:first-child:hover:not(.botao-loading) {
-      background: #1c7430;
-    }
-    .botoes-container button:last-child {
-      background: #dc3545;
-      color: white;
-    }
-    .botoes-container button:last-child:hover {
-      background: #a12a2a;
-    }
-
-    /* Animação botão loading */
     .botao-loading {
+      position: relative;
       color: transparent !important;
       pointer-events: none;
     }
+
     .botao-loading::after {
       content: "";
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 24px;
-      height: 24px;
+      top: 50%; left: 50%;
+      width: 24px; height: 24px;
       margin: -12px 0 0 -12px;
-      background: url('images/Carregando.png') no-repeat center center;
+      background: url('Carregando.png') no-repeat center center;
       background-size: contain;
       animation: girar 2s linear infinite;
     }
+
     @keyframes girar {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -223,32 +131,37 @@
       align-items: center;
       z-index: 1000;
     }
+
     #mensagemAgradecimento.mostrar {
       display: flex;
     }
+
     .caixa-agradecimento {
       background: #fff;
       padding: 30px;
       border-radius: 15px;
       text-align: center;
-      max-width: 400px;
-      width: 90%;
+      width: 80vw;
+      max-width: 600px;  /* limita a 600px em telas maiores */
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
       animation: zoomIn 0.8s ease;
     }
+
+
     .caixa-agradecimento h2 {
       color: #c59d5f;
       margin-bottom: 10px;
     }
+
     .caixa-agradecimento p {
       color: #555;
       font-size: 1rem;
     }
+
     @keyframes zoomIn {
-      from { transform: scale(0.9); opacity: 0; }
+      from { transform: scale(0.8); opacity: 0; }
       to   { transform: scale(1); opacity: 1; }
     }
-
   </style>
 </head>
 <body>
@@ -269,10 +182,8 @@
         <input type="text" name="nome" placeholder="Seu nome" required />
         <input type="email" name="email" placeholder="Seu e-mail" required />
         <textarea name="mensagem" readonly required></textarea>
-        <div class="botoes-container">
-          <button type="submit">Confirmar</button>
-          <button type="button" onclick="fecharModal()">Cancelar</button>
-        </div>
+        <button type="submit">Confirmar</button>
+        <button type="button" onclick="fecharModal()">Cancelar</button>
       </form>
     </div>
   </div>
@@ -382,7 +293,7 @@
       }, 4000);
     }
 
-    form.addEventListener("submit", e => {
+    form.addEventListener("submit", function (e) {
       e.preventDefault();
 
       const botaoConfirmar = form.querySelector("button[type='submit']");
@@ -390,26 +301,26 @@
       botaoConfirmar.disabled = true;
 
       const formData = new FormData(form);
-
       fetch(URL_ENVIAR, {
         method: "POST",
         body: formData
       })
-      .then(res => {
-        if (!res.ok) throw new Error("Erro no envio");
-        return res.text();
-      })
-      .then(() => {
-        fecharModal();
-        mostrarMensagemAgradecimento();
-      })
-      .catch(() => {
-        alert("Erro ao enviar. Tente novamente.");
-      })
-      .finally(() => {
-        botaoConfirmar.classList.remove("botao-loading");
-        botaoConfirmar.disabled = false;
-      });
+        .then(res => res.json())
+        .then(res => {
+          if (res.resultado === "Sucesso") {
+            mostrarMensagemAgradecimento();
+            lista[presenteSelecionado].disponível = "não";
+            fecharModal();
+            mostrarPresentes();
+          } else {
+            alert("Esse presente já foi escolhido por outra pessoa.");
+          }
+        })
+        .catch(() => alert("Erro ao confirmar presente."))
+        .finally(() => {
+          botaoConfirmar.classList.remove("botao-loading");
+          botaoConfirmar.disabled = false;
+        });
     });
 
     carregarPresentes();
