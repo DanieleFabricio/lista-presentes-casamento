@@ -118,7 +118,7 @@
       top: 50%; left: 50%;
       width: 24px; height: 24px;
       margin: -12px 0 0 -12px;
-      background: url('images/Carregando.png') no-repeat center center;
+      background: url('Carregando.png') no-repeat center center;
       background-size: contain;
       animation: girar 2s linear infinite;
       z-index: 10;
@@ -169,6 +169,38 @@
       from { transform: scale(0.9); opacity: 0; }
       to   { transform: scale(1); opacity: 1; }
     }
+
+    /* Ajustes para telas pequenas (celulares) */
+    @media (max-width: 600px) {
+      /* Botões lado a lado */
+      .modal-content form {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: nowrap;
+      }
+
+      .modal-content button {
+        flex: 1;
+        margin: 0;
+      }
+
+      /* Inputs e textarea menores */
+      .modal-content input,
+      .modal-content textarea {
+        width: 100%;
+        font-size: 1rem;
+      }
+
+      /* Caixa de agradecimento com largura menor */
+      .caixa-agradecimento {
+        width: 80% !important;
+        max-width: none !important;
+        padding: 20px !important;
+      }
+    }
+
+    
   </style>
 </head>
 <body>
