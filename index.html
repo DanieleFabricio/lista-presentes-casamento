@@ -172,25 +172,29 @@
 
     /* Ajustes para telas pequenas (celulares) */
     @media (max-width: 600px) {
+      /* Formulário com inputs empilhados */
+      #modal .modal-content form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+    
       /* Botões lado a lado */
-      .modal-content form {
+      #modal .modal-content form button {
+        flex: 1;
+      }
+    
+      /* Container dos botões para ficarem lado a lado */
+      #modal .modal-content form {
+        /* já tem flex column para inputs, para os botões criamos um wrapper */
+      }
+      
+      /* Vamos criar um wrapper para botões */
+      #modal .modal-content form .botoes-container {
         display: flex;
         gap: 10px;
-        justify-content: center;
-        flex-wrap: nowrap;
       }
-
-      .modal-content button {
-        flex: 1;
-        margin: 0;
-      }
-
-      /* Inputs e textarea menores */
-      .modal-content input,
-      .modal-content textarea {
-        width: 100%;
-        font-size: 1rem;
-      }
+    }
 
       /* Caixa de agradecimento com largura menor */
       .caixa-agradecimento {
@@ -221,8 +225,10 @@
         <input type="text" name="nome" placeholder="Seu nome" required />
         <input type="email" name="email" placeholder="Seu e-mail" required />
         <textarea name="mensagem" readonly required></textarea>
-        <button type="submit"><span>Confirmar</span></button>
-        <button type="button" onclick="fecharModal()">Cancelar</button>
+        <div class="botoes-container">
+          <button type="submit">Confirmar</button>
+          <button type="button" onclick="fecharModal()">Cancelar</button>
+        </div>
       </form>
     </div>
   </div>
