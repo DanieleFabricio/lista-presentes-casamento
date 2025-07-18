@@ -93,24 +93,25 @@
       cursor: not-allowed;
       text-align: center;
     }
+    .modal-content form {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
     .modal-content button {
       padding: 10px 20px; border: none; border-radius: 8px; margin: 5px; font-size: 1rem;
-    }
-    .modal-content button:first-of-type {
-      background: #28a745;
-      color: #fff;
-    }
-    .modal-content button:last-of-type {
-      background: #dc3545;
-      color: white;
-    }
-
-    .botao-loading {
+      min-width: 120px;
       position: relative;
-      color: transparent !important;
-      pointer-events: none;
+      overflow: hidden;
     }
+    .modal-content button:first-of-type { background: #28a745; color: #fff; }
+    .modal-content button:last-of-type { background: #dc3545; color: white; }
 
+    /* Ajuste para spinner no botão confirmar */
+    .botao-loading span {
+      visibility: hidden;
+    }
     .botao-loading::after {
       content: "";
       position: absolute;
@@ -120,6 +121,7 @@
       background: url('Carregando.png') no-repeat center center;
       background-size: contain;
       animation: girar 2s linear infinite;
+      z-index: 10;
     }
 
     @keyframes girar {
@@ -187,7 +189,7 @@
         <input type="text" name="nome" placeholder="Seu nome" required />
         <input type="email" name="email" placeholder="Seu e-mail" required />
         <textarea name="mensagem" readonly required></textarea>
-        <button type="submit" class="botao">Confirmar</button>
+        <button type="submit"><span>Confirmar</span></button>
         <button type="button" onclick="fecharModal()">Cancelar</button>
       </form>
     </div>
