@@ -75,29 +75,93 @@
     .modal.ativo { display: flex; }
     .modal-content {
       background: white; padding: 30px; border-radius: 12px;
-      text-align: center; width: 90%; max-width: 500px; box-sizing: border-box;
+      width: 90%; max-width: 500px; box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
     }
-    .modal-content input,
-    .modal-content textarea {
-      width: 90%; padding: 12px; margin: 10px 0;
-      border-radius: 8px; border: 1px solid #ccc; font-size: 1rem;
+
+    /* Título Digite: alinhado à esquerda e pequeno */
+    .modal-content h4 {
+      align-self: flex-start;
+      margin: 0 0 5px 0;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #555;
+    }
+
+    /* Campos nome e email */
+    .modal-content input {
+      width: 100%;
+      padding: 12px;
+      margin: 4px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
       box-sizing: border-box;
     }
+
+    /* Texto centralizado Você escolheu: */
+    .modal-content p.escolha {
+      text-align: center;
+      font-weight: bold;
+      margin: 15px 0 8px 0;
+      font-size: 1.2rem;
+      color: #333;
+      width: 100%;
+    }
+
     .modal-content textarea {
       resize: none;
-      height: 50px;
+      height: 40px;
       font-weight: bold;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: #333;
       background: #eee;
       cursor: not-allowed;
       text-align: center;
+
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 100%;
+      margin: 0 auto;
+      display: block;
+      box-sizing: border-box;
+
+      /* Para centralizar verticalmente o texto */
+      line-height: 40px;       /* igual à altura */
+      padding-top: 0;          /* remove padding para não atrapalhar */
+      padding-bottom: 0;
+      overflow: hidden;        /* esconde scroll se houver */
     }
+
+
+    /* Botões lado a lado centralizados */
+    .botoes-container {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      width: 100%;
+      margin-top: 25px;
+    }
+
     .modal-content button {
-      padding: 10px 20px; border: none; border-radius: 8px; margin: 5px; font-size: 1rem;
+      flex: 1;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
     }
-    .modal-content button:first-of-type { background: #28a745; color: #fff; }
-    .modal-content button:last-of-type { background: #dc3545; color: white; }
+    .modal-content button.confirmar {
+      background: #28a745;
+      color: #fff;
+    }
+    .modal-content button.cancelar {
+      background: #dc3545;
+      color: #fff;
+    }
 
     .botao-loading {
       position: relative;
@@ -132,6 +196,11 @@
       z-index: 1000;
     }
 
+    .esconde-produto {
+      display: none;
+}
+
+
     #mensagemAgradecimento.mostrar {
       display: flex;
     }
@@ -141,12 +210,11 @@
       padding: 30px;
       border-radius: 15px;
       text-align: center;
-      width: 70vw;
+      width: 80vw;
       max-width: 600px;  /* limita a 600px em telas maiores */
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
       animation: zoomIn 0.8s ease;
     }
-
 
     .caixa-agradecimento h2 {
       color: #c59d5f;
@@ -174,16 +242,22 @@
     <div id="presentes">Carregando presentes...</div>
   </div>
 
-  <!-- Modal com textarea como mensagem -->
+  <!-- Modal reorganizado -->
   <div id="modal" class="modal">
     <div class="modal-content">
-      <h2>Você escolheu: <span id="presenteSelecionadoNome"></span></h2>
+      <h4>Digite:</h4>
       <form id="formularioPresente">
         <input type="text" name="nome" placeholder="Seu nome" required />
         <input type="email" name="email" placeholder="Seu e-mail" required />
+
+        <p class="escolha">Você escolheu: <span id="presenteSelecionadoNome" class="esconde-produto"></span></p>
+
         <textarea name="mensagem" readonly required></textarea>
-        <button type="submit">Confirmar</button>
-        <button type="button" onclick="fecharModal()">Cancelar</button>
+
+        <div class="botoes-container">
+          <button type="submit" class="confirmar">Confirmar</button>
+          <button type="button" class="cancelar" onclick="fecharModal()">Cancelar</button>
+        </div>
       </form>
     </div>
   </div>
